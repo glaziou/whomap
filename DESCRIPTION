@@ -1,0 +1,11 @@
+Package: whomap
+Version: 0.2.0
+Title: Cloropleth maps of the world using shapes from WHO
+Authors@R: person("Philippe", "Glaziou", email = "glaziou@gmail.com", role = c("aut", "cre"))
+Description: Loads WHO shape files and provides a wrapper to ggplot2.
+Depends: R (>= 3.5.0), ggplot2 (>= 2.0.0)
+Imports: dplyr
+License: GPL-2 | file LICENSE
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
