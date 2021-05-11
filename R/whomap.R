@@ -42,7 +42,7 @@ whomap <- function (X,
 
 
   #   add GUF (=FRA), COK (No data), ESH (NA)
-  x1 <- X[X$iso3 %in% c('FRA')]
+  x1 <- X[X$iso3 == 'FRA', ]
   if (dim(x1)[2] > 0 &
       is.na(match('GUF', X$iso3)))
     x1$iso3[x1$iso3 == 'FRA'] <- 'GUF'
