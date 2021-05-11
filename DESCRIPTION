@@ -3,8 +3,8 @@ Version: 0.7.1
 Title: Cloropleth maps of the world using shapes from WHO
 Authors@R: person("Philippe", "Glaziou", email = "glaziou@gmail.com", role = c("aut", "cre"))
 Description: Loads WHO shape files and provides a wrapper to ggplot2.
-Depends: R (>= 4.0.0), ggplot2 (>= 3.3.0)
-Imports: scales
+Depends: R (>= 4.0.0), ggplot2 (>= 3.3.0), scales (>= 1.1.0)
+Imports: 
 License: GPL-2 | file LICENSE
 Encoding: UTF-8
 LazyData: true
