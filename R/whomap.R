@@ -55,7 +55,7 @@ whomap <- function (X,
   X <- rbind(X, x1, x2, x3)
 
 
-  # add missing circles for ASM, PYF, MNP, WLF
+  #  add missing circles for ASM, PYF, MNP, WLF
   asm <-
     subset(gworld, id == "WSM")
   asm$id <-
@@ -248,7 +248,7 @@ whomap <- function (X,
     )
 
   #   merge data
-  toplot <- mapdata(X)
+  toplot <- mapdata(X, gworld)
   levels(toplot$var) <-
     c(levels(toplot$var), na.label, 'Not applicable')
   toplot[is.na(toplot$var), "var"] <- na.label
