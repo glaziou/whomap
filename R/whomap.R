@@ -16,14 +16,15 @@ whomap <- function (X,
   if (all(c("iso3", "var") %in% names(X)) == FALSE)
     stop("X must have two variables named 'iso3' and 'var'")
 
-  if(!is.factor(X$var)) X$var <- as.factor(X$var)
+  X <- as.data.frame(subset(X, !is.na(X$var) & X$var!=""))
+  X$var <- as.factor(X$var)
 
   #   colors
   if (!is.null(colours) &
-      length(unique(X[["var"]])) != length(colours))
+      length(levels(X$var)) != length(colours))
     stop(
       paste(
-        "var categories and colors do not match. var has",
+        "var categories (excluding missing values) and colors do not match. var has",
         length(unique(X[["var"]])),
         "levels and colours has",
         length(colours),
@@ -31,14 +32,13 @@ whomap <- function (X,
       )
     )
 
-
   if (is.null(colours)) {
-    x <- seq(0, 1, length = length(unique(X[["var"]])))
-    x1 <- seq_gradient_pal(low.col, high.col)(x)
+    xc <- seq(0, 1, length = length(levels(X[["var"]])))
+    col <- seq_gradient_pal(low.col, high.col)(xc)
   } else
-    x1 <- colours
+    col <- colours
 
-  colours2 <- c(x1, 'white', 'grey75')
+  col2 <- c(col, 'white', 'grey75')
 
 
   #   add GUF (=FRA), SJM (=NOR), COK (No data), ESH (NA)
@@ -51,11 +51,8 @@ whomap <- function (X,
       is.na(match('SJM', X$iso3)))
     x2$iso3[x2$iso3 == 'NOR'] <- 'SJM'
   x3 <- x4 <- X[1,]
-  x3$iso3 <- 'COK'
-  x3$var <- 'No data'
-  x4$iso3 <- 'ESH'
-  x4$var <- 'Not applicable'
-  X <- rbind(X, x1, x2, x3, x4)
+  x3$iso3 <- 'ESH'
+  X <- rbind(X, x1, x2, x3)
 
 
   # add missing circles for ASM, PYF, MNP, WLF
@@ -93,18 +90,6 @@ whomap <- function (X,
   wlf$lat <- wlf$lat - 0.2
 
   gworld <- rbind(gworld, asm, pyf, mnp, wlf)
-
-  # Color Svalbard and Jan Mayen the same as Norway
-  # gworld[gworld$group == "SJM.1", "piece"] <- "2"
-  # gworld[gworld$group == "SJM.2", "piece"] <- "3"
-  # gworld[gworld$group == "SJM.3", "piece"] <- "4"
-  # gworld[gworld$id == "SJM", "id"] <- "NOR"
-  #
-  # levels(gworld$group) <-
-  #   c(levels(gworld$group), "NOR.2", "NOR.3", "NOR.4")
-  # gworld[gworld$group == "SJM.1", "group"] <- "NOR.2"
-  # gworld[gworld$group == "SJM.2", "group"] <- "NOR.3"
-  # gworld[gworld$group == "SJM.3", "group"] <- "NOR.4"
 
 
   # Askai Chin hack
@@ -267,7 +252,8 @@ whomap <- function (X,
   levels(toplot$var) <-
     c(levels(toplot$var), na.label, 'Not applicable')
   toplot[is.na(toplot$var), "var"] <- na.label
-  toplot[toplot$id == "ESH", "var"] <- 'Not applicable'
+  toplot[toplot$id=="ESH","var"] <- 'Not applicable'
+
 
   # plot
   zx <- c(-180, 180)
@@ -278,7 +264,7 @@ whomap <- function (X,
     pol1 + pol2 + pol3 + pol3b + pol4 + pol5 + lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
     geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
-    scale_fill_manual(legend.title, values = colours2) +
+    scale_fill_manual(legend.title, values = col2) +
     coord_cartesian(xlim = zx, ylim = zy) +
     labs(title = map.title) +
 
