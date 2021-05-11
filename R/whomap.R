@@ -16,7 +16,7 @@ whomap <- function (X,
   if (all(c("iso3", "var") %in% names(X)) == FALSE)
     stop("X must have two variables named 'iso3' and 'var'")
 
-  if(!is.factor(X$var)) X$var <- factor(X$var)
+  if(!is.factor(X$var)) X$var <- as.factor(X$var)
 
   #   colors
   if (!is.null(colours) &

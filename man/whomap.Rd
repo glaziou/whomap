@@ -76,7 +76,7 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
 # Map of the BRICS countries in red
 brics <- data.frame(iso3=c('BRA','RUS','IND','CHN','ZAF','SWZ','LSO'),
                     var=c(rep("yes", 5), rep("no", 2)))
-whomap(X=brics, colours=c('white','red')), legend.pos='none')
+whomap(X=brics, colours=c('white','red'), legend.pos='none')
 }
 \keyword{ ~map }
 \keyword{ ~world }% __ONLY ONE__ keyword per line
