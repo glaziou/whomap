@@ -41,17 +41,21 @@ whomap <- function (X,
   colours2 <- c(x1, 'white', 'grey75')
 
 
-  #   add GUF (=FRA), COK (No data), ESH (NA)
+  #   add GUF (=FRA), SJM (=NOR), COK (No data), ESH (NA)
   x1 <- X[X$iso3 == 'FRA', ]
   if (dim(x1)[2] > 0 &
       is.na(match('GUF', X$iso3)))
     x1$iso3[x1$iso3 == 'FRA'] <- 'GUF'
-  x2 <- x3 <- X[1,]
-  x2$iso3 <- 'COK'
-  x2$var <- 'No data'
-  x3$iso3 <- 'ESH'
-  x3$var <- 'Not applicable'
-  X <- rbind(X, x1, x2, x3)
+  x2 <- X[X$iso3 == 'NOR', ]
+  if (dim(x2)[2] > 0 &
+      is.na(match('SJM', X$iso3)))
+    x2$iso3[x2$iso3 == 'NOR'] <- 'SJM'
+  x3 <- x4 <- X[1,]
+  x3$iso3 <- 'COK'
+  x3$var <- 'No data'
+  x4$iso3 <- 'ESH'
+  x4$var <- 'Not applicable'
+  X <- rbind(X, x1, x2, x3, x4)
 
 
   # add missing circles for ASM, PYF, MNP, WLF
@@ -91,17 +95,16 @@ whomap <- function (X,
   gworld <- rbind(gworld, asm, pyf, mnp, wlf)
 
   # Color Svalbard and Jan Mayen the same as Norway
-  gworld[gworld$group == "SJM.1", "piece"] <- "2"
-  gworld[gworld$group == "SJM.2", "piece"] <- "3"
-  gworld[gworld$group == "SJM.3", "piece"] <- "4"
-
-  gworld[gworld$id == "SJM", "id"] <- "NOR"
-
-  levels(gworld$group) <-
-    c(levels(gworld$group), "NOR.2", "NOR.3", "NOR.4")
-  gworld[gworld$group == "SJM.1", "group"] <- "NOR.2"
-  gworld[gworld$group == "SJM.2", "group"] <- "NOR.3"
-  gworld[gworld$group == "SJM.3", "group"] <- "NOR.4"
+  # gworld[gworld$group == "SJM.1", "piece"] <- "2"
+  # gworld[gworld$group == "SJM.2", "piece"] <- "3"
+  # gworld[gworld$group == "SJM.3", "piece"] <- "4"
+  # gworld[gworld$id == "SJM", "id"] <- "NOR"
+  #
+  # levels(gworld$group) <-
+  #   c(levels(gworld$group), "NOR.2", "NOR.3", "NOR.4")
+  # gworld[gworld$group == "SJM.1", "group"] <- "NOR.2"
+  # gworld[gworld$group == "SJM.2", "group"] <- "NOR.3"
+  # gworld[gworld$group == "SJM.3", "group"] <- "NOR.4"
 
 
   # Askai Chin hack
