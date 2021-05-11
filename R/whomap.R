@@ -55,7 +55,7 @@ whomap <- function (X,
   X <- rbind(X, x1, x2, x3)
 
 
-  # add missing circles for ASM, COK, MNP, WLF
+  # add missing circles for ASM, PYF, MNP, WLF
   asm <-
     subset(gworld, id == "WSM")
   asm$id <-
@@ -64,14 +64,14 @@ whomap <- function (X,
     "ASM.1"
   asm$long <- asm$long + 2
   asm$lat <- asm$lat - 0.5
-  cok <-
+  pyf <-
     subset(gworld, id == "COK")
-  cok$id <-
-    "COK"
-  cok$group <-
-    "COK.1"
-  cok$long <- cok$long + 10
-  cok$lat <- cok$lat + 1
+  pyf$id <-
+    "PYF"
+  pyf$group <-
+    "PYF.1"
+  pyf$long <- pyf$long + 10
+  pyf$lat <- pyf$lat + 1
   mnp <-
     subset(gworld, id == "GUM")
   mnp$id <-
@@ -89,7 +89,7 @@ whomap <- function (X,
   wlf$long <- wlf$long - 5
   wlf$lat <- wlf$lat - 0.2
 
-  gworld <- rbind(gworld, asm, cok, mnp, wlf)
+  gworld <- rbind(gworld, asm, pyf, mnp, wlf)
 
 
   # Askai Chin hack
