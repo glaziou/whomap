@@ -5,8 +5,10 @@
     Main function, prints a map of the world using WHO shapefiles
 }
 \usage{
-whomap(X, Z = scale_fill_brewer(palette = "YlGnBu", type = "seq"),
-      legendpos = c(0.1, 0.3), col = "black", cut = T)
+whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
+    line.col = "black", map.title = "", legend.title = "",
+    background = NA, na.label = "No data", disclaimer = FALSE,
+    legend.pos = c(0.09, 0.26))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,17 +16,35 @@ whomap(X, Z = scale_fill_brewer(palette = "YlGnBu", type = "seq"),
       Dataset - must contain a variable "iso" (factor) with standard WHO ISO3 country codes.
       The categorical variable to me mapped should be named "var" (see examples).
 }
-  \item{Z}{
-    Optional parameter. scale_fill_manual or scale_fill_brewer object (see examples).
+  \item{colours}{
+    Optional parameter, scale_fill_manual or scale_fill_brewer object (see examples).
 }
-  \item{legendpos}{
-      Legend position - see legend.pos options in ggplot2 and examples.
+  \item{low.col}{
+    Optional parameter, first level of a colour gradient.
 }
-  \item{col}{
-      colour of borders (defaults to black)
+  \item{high.col}{
+    Optional parameter, last level of a colour gradient.
 }
-  \item{cut}{
-      cuts out the tip of Western Siberia to avoid having Russia on two sides of the map (defaults to TRUE)
+  \item{line.col}{
+    Optional parameter, colour of lines.
+}
+  \item{map.title}{
+    Optional parameter. Title.
+}
+  \item{legend.title}{
+    Optional parameter, legend title.
+}
+  \item{background}{
+    Optional parameter, background colour.
+}
+  \item{na.label}{
+    Optional parameter, legend label for missing values.
+}
+  \item{disclaimer}{
+    Optional parameter, WHO disclaimer at the bottom of the map.
+}
+  \item{legend.pos}{
+    Optional parameter, legend position - see legend.pos options in ggplot2.
 }
 }
 \details{
@@ -41,7 +61,7 @@ whomap(X, Z = scale_fill_brewer(palette = "YlGnBu", type = "seq"),
 %% ~put references to the literature/web site here ~
 }
 \author{
-    Philippe Glaziou, based on a script from Tom Hiatt
+    Philippe Glaziou, based on scripts from Tom Hiatt and Hazim Timimi
 }
 \note{
 %%  ~~further notes~~
