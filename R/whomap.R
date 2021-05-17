@@ -243,11 +243,9 @@ whomap <- function (X,
       disclaimer == FALSE,
       "",
       "\uA9 World Health Organization 2015. All rights reserved.
-  The designations employed and the presentation of the material in this publication do not
-  imply the expression of any opinion whatsoever on the part of the World Health Organization
-  concerning the legal status of any country, territory, city or area or of its authorities,
-  or concerning the delimitation of its frontiers or boundaries. Dotted and dashed lines on
-  maps represent approximate borderlines for which there may not yet be full agreement."
+  The designations employed and the presentation of the material in this publication do not imply the expression of any opinion whatsoever on the part of
+  the World Health Organization concerning the legal status of any country, territory, city or area or of its authorities,or concerning the delimitation
+  of its frontiers or boundaries. Dotted and dashed lines on maps represent approximate borderlines for which there may not yet be full agreement."
     )
 
   #   merge data
@@ -263,7 +261,7 @@ whomap <- function (X,
   zx <- c(-180, 180)
   zy <- c(min(gworld$lat), max(gworld$lat))
 
-  plot <-  ggplot(toplot, aes(long, lat)) +
+  p <-  ggplot(toplot, aes(long, lat)) +
     geom_polygon(aes(group = group, fill = var), colour = NA) +
     pol1 + pol2 + pol3 + pol4 + pol5 + pol6 + lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
@@ -283,13 +281,21 @@ whomap <- function (X,
       legend.justification = c(0.5, 1),
       legend.title = element_text(size = 7, hjust = 0),
       rect = element_blank()
-    ) +
-    annotate("text",
-             -20,
-             -54,
-             label = disclaim,
-             size = 2,
-             hjust = 0)
+    )
 
-  print(plot)
+  if (disclaimer == TRUE)
+    print(p)
+  else
+  {
+    print(p) +
+      labs(caption = disclaim) +
+      theme(
+        plot.caption.position = 'plot',
+        plot.caption = element_text(
+          size = 6,
+          hjust = 0.5
+        )
+      )
+  }
 }
+
