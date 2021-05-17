@@ -25,6 +25,7 @@ brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
                     var=5:1)
                     
 whomap(brics, legend.title='BRICS')
+![image](https://user-images.githubusercontent.com/233963/118531724-6e3cbc80-b746-11eb-8889-ce391d6420d6.png)
 
 
 
