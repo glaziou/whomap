@@ -239,14 +239,10 @@ whomap <- function (X,
 
   #   disclaimer
   disclaim <-
-    ifelse(
-      disclaimer == FALSE,
-      "",
-      "\uA9 World Health Organization 2015. All rights reserved.
+    "\uA9 World Health Organization 2015. All rights reserved.
   The designations employed and the presentation of the material in this publication do not imply the expression of any opinion whatsoever on the part of
   the World Health Organization concerning the legal status of any country, territory, city or area or of its authorities,or concerning the delimitation
   of its frontiers or boundaries. Dotted and dashed lines on maps represent approximate borderlines for which there may not yet be full agreement."
-    )
 
   #   merge data
   toplot <- merge(gworld, X, by.x = 'id', by.y = 'iso3', all.x = TRUE)
@@ -283,7 +279,7 @@ whomap <- function (X,
       rect = element_blank()
     )
 
-  if (disclaimer == TRUE)
+  if (disclaimer == FALSE)
     print(p)
   else
   {
