@@ -74,9 +74,8 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
 }
 \examples{
 # Map of the BRICS countries in red, no legend
-brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF','SWZ','LSO'),
-                    var=c(rep("yes", 5), rep("no", 2)))
-whomap(X=brics, colours=c('white','red'), legend.pos='none')
+brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1)
+whomap(X=brics, colours=c('red'), legend.pos='none')
 
 # with legend
 brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
