@@ -14,7 +14,7 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
 \arguments{
   \item{X}{
       Dataset - must contain a variable "iso" (factor) with standard WHO ISO3 country codes.
-      The categorical variable to me mapped should be named "var" (see examples).
+      The categorical variable to be mapped should be named "var" (see examples).
 }
   \item{colours}{
     Optional parameter, scale_fill_manual or scale_fill_brewer object (see examples).
@@ -26,10 +26,10 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     Optional parameter, last level of a colour gradient.
 }
   \item{line.col}{
-    Optional parameter, colour of lines.
+    Optional parameter, colour of border lines.
 }
   \item{map.title}{
-    Optional parameter. Title.
+    Optional parameter, plot title.
 }
   \item{legend.title}{
     Optional parameter, legend title.
@@ -41,7 +41,7 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     Optional parameter, legend label for missing values.
 }
   \item{disclaimer}{
-    Optional parameter, WHO disclaimer at the bottom of the map.
+    Optional parameter, show WHO disclaimer.
 }
   \item{legend.pos}{
     Optional parameter, legend position - see legend.pos options in ggplot2.
@@ -73,10 +73,15 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     \code{\link{geom_map}}
 }
 \examples{
-# Map of the BRICS countries in red
-brics <- data.frame(iso3=c('BRA','RUS','IND','CHN','ZAF','SWZ','LSO'),
+# Map of the BRICS countries in red, no legend
+brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF','SWZ','LSO'),
                     var=c(rep("yes", 5), rep("no", 2)))
 whomap(X=brics, colours=c('white','red'), legend.pos='none')
+
+# with legend
+brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
+                    var=5:1)
+whomap(brics, legend.title='BRICS')
 }
 \keyword{ ~map }
 \keyword{ ~world }% __ONLY ONE__ keyword per line

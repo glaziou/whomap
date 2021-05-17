@@ -17,7 +17,10 @@ whomap <- function (X,
     stop("X must have two variables named 'iso3' and 'var'")
 
   X <- as.data.frame(subset(X, !is.na(X$var) & X$var!=""))
-  X$var <- as.factor(X$var)
+  if (is.factor(X$var))
+    levels(X$var) <- droplevels(X$var, exclude = '')
+  else
+    X$var <- as.factor(X$var)
 
   #   colors
   if (!is.null(colours) &
@@ -187,14 +190,14 @@ whomap <- function (X,
       fill = I("grey75"),
       colour = NA
     )
-  pol3b <-
+  pol4 <-
     geom_polygon(
       data = AC,
       aes(group = group),
       fill = I("grey75"),
       colour = NA
     )
-  pol4 <-
+  pol5 <-
     geom_polygon(
       data = subset(gpoly, id == "Abyei"),
       aes(group = group),
@@ -202,7 +205,7 @@ whomap <- function (X,
       colour = line.col,
       linetype = "dotted"
     )
-  pol5 <-
+  pol6 <-
     geom_polygon(
       data = gworld[gworld$id == 'ESH',],
       aes(group = group),
@@ -248,7 +251,8 @@ whomap <- function (X,
     )
 
   #   merge data
-  toplot <- mapdata(X, gworld)
+  toplot <- merge(gworld, X, by.x = 'id', by.y = 'iso3', all.x = TRUE)
+  toplot <- toplot[order(toplot$order), ]
   levels(toplot$var) <-
     c(levels(toplot$var), na.label, 'Not applicable')
   toplot[is.na(toplot$var), "var"] <- na.label
@@ -261,22 +265,23 @@ whomap <- function (X,
 
   plot <-  ggplot(toplot, aes(long, lat)) +
     geom_polygon(aes(group = group, fill = var), colour = NA) +
-    pol1 + pol2 + pol3 + pol3b + pol4 + pol5 + lin0 + lin1 + lin2 + lin3 + lin4 +
+    pol1 + pol2 + pol3 + pol4 + pol5 + pol6 + lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
     geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
     scale_fill_manual(legend.title, values = col2) +
     coord_cartesian(xlim = zx, ylim = zy) +
     labs(title = map.title) +
-
     theme(
       aspect.ratio = 2.2 / 4,
       plot.title = element_text(size = 16, hjust = 0),
       plot.background = element_rect(fill = background),
-      legend.key.size = unit(0.50, "cm"),
-      legend.text = element_text(size = 8),
+      legend.key = element_rect(color='grey75'),
+      legend.key.height = unit(0.4, "cm"),
+      legend.key.width = unit(0.6, "cm"),
+      legend.text = element_text(size = 7),
       legend.position = legend.pos,
       legend.justification = c(0.5, 1),
-      legend.title = element_text(size = 10, hjust = 0),
+      legend.title = element_text(size = 7, hjust = 0),
       rect = element_blank()
     ) +
     annotate("text",
