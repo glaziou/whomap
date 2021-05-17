@@ -29,6 +29,7 @@ whomap(brics, colour='red', legend.pos='none)
 ![image](https://user-images.githubusercontent.com/233963/118537402-31c08f00-b74d-11eb-9225-b3fd45cc5a66.png)
 
 brics$var <- 5:1
+
 whomap(brics, legend.title='BRICS')
 
 ![image](https://user-images.githubusercontent.com/233963/118531724-6e3cbc80-b746-11eb-8889-ce391d6420d6.png)
