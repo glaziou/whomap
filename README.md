@@ -24,7 +24,7 @@ Example:
 brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
                     var=1)
 
-whomap(brics, colour='red', legend.pos='none)
+whomap(brics, colour='red', legend.pos='none')
 
 ![image](https://user-images.githubusercontent.com/233963/118537402-31c08f00-b74d-11eb-9225-b3fd45cc5a66.png)
 
