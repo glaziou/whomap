@@ -8,6 +8,7 @@ whomap <- function (X,
                     legend.title = "",
                     background = NA,
                     na.label = 'No data',
+                    na.col = 'grey95',
                     disclaimer = FALSE,
                     legend.pos = c(0.09, 0.26),
                     recentre = 29)
@@ -48,7 +49,7 @@ whomap <- function (X,
   } else
     col <- colours
 
-  col2 <- c(col, 'white', 'grey75')
+  col2 <- c(col, na.col, 'grey75')
 
 
   #   add GUF (=FRA), SJM (=NOR), ESH (NA)
@@ -304,7 +305,7 @@ whomap <- function (X,
       aspect.ratio = 2.2 / 4,
       plot.title = element_text(size = 16, hjust = 0),
       plot.background = element_rect(fill = background),
-      legend.key = element_rect(color = 'grey75'),
+#      legend.key = element_rect(color = 'grey75'),
       legend.key.height = unit(0.4, "cm"),
       legend.key.width = unit(0.6, "cm"),
       legend.text = element_text(size = 7),

@@ -7,8 +7,8 @@
 \usage{
 whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     line.col = "black", map.title = "", legend.title = "",
-    background = NA, na.label = "No data", disclaimer = FALSE,
-    legend.pos = c(0.09, 0.26), recentre = 29)
+    background = NA, na.label = "No data", na.col = 'grey95',
+    disclaimer = FALSE, legend.pos = c(0.09, 0.26), recentre = 29)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,6 +39,9 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
 }
   \item{na.label}{
     Optional parameter, legend label for missing values.
+}
+  \item{na.col}{
+    Optional parameter, colour for missing values.
 }
   \item{disclaimer}{
     Optional parameter, show WHO disclaimer.
