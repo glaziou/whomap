@@ -1,6 +1,6 @@
 # R package whomap
 
-Draws choropleth maps of the world, based on WHO shapefiles.
+Draws choropleth maps of the world, based on WHO shapefiles and scripts from Tom Hyatt and Hazim Timimi.
 
 
 ## Install:
@@ -26,13 +26,21 @@ brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
 
 whomap(brics, colour='red', legend.pos='none')
 
-![image](https://user-images.githubusercontent.com/233963/118537402-31c08f00-b74d-11eb-9225-b3fd45cc5a66.png)
+![image](https://user-images.githubusercontent.com/233963/119390299-20d3c880-bccd-11eb-9062-31d224a9757a.png)
 
-brics$var <- 5:1
+
+brics$var <- 1:5
 
 whomap(brics, legend.title='BRICS')
 
-![image](https://user-images.githubusercontent.com/233963/118531724-6e3cbc80-b746-11eb-8889-ce391d6420d6.png)
+![image](https://user-images.githubusercontent.com/233963/119390355-3812b600-bccd-11eb-895d-c73c0593a9c0.png)
+
+
+Recentred on the region Asia-Pacific:
+
+whomap(brics, legend.title = 'BRICS', recentre = 173)
+
+![image](https://user-images.githubusercontent.com/233963/119390539-79a36100-bccd-11eb-9f22-534d59d11527.png)
 
 
 
