@@ -8,7 +8,7 @@
 whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     line.col = "black", map.title = "", legend.title = "",
     background = NA, na.label = "No data", disclaimer = FALSE,
-    legend.pos = c(0.09, 0.26))
+    legend.pos = c(0.09, 0.26), recentre = 29)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,6 +45,9 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
 }
   \item{legend.pos}{
     Optional parameter, legend position - see legend.pos options in ggplot2.
+}
+  \item{recentre}{
+    Optional parameter, a longitude between 0 and 360 which will be the centre of the map.
 }
 }
 \details{

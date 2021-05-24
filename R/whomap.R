@@ -9,18 +9,25 @@ whomap <- function (X,
                     background = NA,
                     na.label = 'No data',
                     disclaimer = FALSE,
-                    legend.pos = c(0.09, 0.26))
+                    legend.pos = c(0.09, 0.26),
+                    recentre = 29)
 {
   if (is.data.frame(X) == FALSE)
     stop("X must be a dataframe")
   if (all(c("iso3", "var") %in% names(X)) == FALSE)
     stop("X must have two variables named 'iso3' and 'var'")
 
-  X <- as.data.frame(subset(X, !is.na(X$var) & X$var!=""))
+  X <- as.data.frame(subset(X, !is.na(X$var) & X$var != ""))
   if (is.factor(X$var))
     levels(X$var) <- droplevels(X$var, exclude = '')
   else
     X$var <- as.factor(X$var)
+
+
+  #   recentre
+  if (recentre < 0 | recentre > 360)
+    stop('recentre must be a number betwen 0 and 360')
+
 
   #   colors
   if (!is.null(colours) &
@@ -169,13 +176,36 @@ whomap <- function (X,
   jk1[21:22, 'group2'] <- 'Jammu and Kashmir.4'
   jk2 <- subset(jk1, group2 != 'Jammu and Kashmir.1')
 
+
+  # recentring
+  if (recentre > 0) {
+    duplon <- function(dta) {
+      dta2 <- dta
+      dta2$long <- dta2$long + 360
+      dta2$order <- dta2$order + 10000
+      dta2$group <- as.factor(paste(as.character(dta2$group),'b'))
+      return(rbind(dta, dta2))
+    }
+    gworld <- duplon(gworld)
+    gworldndash <- duplon(gworldndash)
+    gworlddash2$group <- gworlddash2$group2
+    gworlddash2 <- duplon(gworlddash2)
+    AC <- duplon(AC)
+    jk2$group <- jk2$group2
+    jk2 <- duplon(jk2)
+    gpoly <- duplon(gpoly)
+    gline <- duplon(gline)
+  }
+
+
+
   pol1 <-
     geom_polygon(data = gworldndash,
                  aes(group = group),
                  colour = line.col,
                  fill = NA)   # map all countries
   lin0 <-
-    geom_path(data = gworlddash2, aes(group = group2), colour = line.col)
+    geom_path(data = gworlddash2, aes(group = group), colour = line.col)
   pol2 <-
     geom_polygon(
       data = subset(gpoly, id == "Lakes"),
@@ -230,9 +260,8 @@ whomap <- function (X,
       colour = line.col,
       linetype = "dashed"
     )
-  #   lin4 <- geom_path(data = subset(gline, id %in% c(8)), aes(group = group), colour = "white", linetype = "dotted")   # dotted white lines (8 and 9 are the same!) I'm replacing this with a new line 4...
   lin4 <-
-    geom_path(data = jk2, aes(group = group2), colour = line.col)
+    geom_path(data = jk2, aes(group = group), colour = line.col)
   thm1 <- scale_y_continuous('', breaks = NULL)
   thm2 <- scale_x_continuous('', breaks = NULL)
   thm3 <- theme_bw()
@@ -245,21 +274,27 @@ whomap <- function (X,
   of its frontiers or boundaries. Dotted and dashed lines on maps represent approximate borderlines for which there may not yet be full agreement."
 
   #   merge data
-  toplot <- merge(gworld, X, by.x = 'id', by.y = 'iso3', all.x = TRUE)
+  toplot <-
+    merge(gworld,
+          X,
+          by.x = 'id',
+          by.y = 'iso3',
+          all.x = TRUE)
   toplot <- toplot[order(toplot$order), ]
   levels(toplot$var) <-
     c(levels(toplot$var), na.label, 'Not applicable')
   toplot[is.na(toplot$var), "var"] <- na.label
-  toplot[toplot$id=="ESH","var"] <- 'Not applicable'
-
+  toplot[toplot$id == "ESH", "var"] <- 'Not applicable'
 
   # plot
   zx <- c(-180, 180)
+  if (recentre>0) zx <- zx + c(recentre, recentre - 33)
   zy <- c(min(gworld$lat), max(gworld$lat))
 
   p <-  ggplot(toplot, aes(long, lat)) +
     geom_polygon(aes(group = group, fill = var), colour = NA) +
-    pol1 + pol2 + pol3 + pol4 + pol5 + pol6 + lin0 + lin1 + lin2 + lin3 + lin4 +
+    pol1 + pol2 + pol3 + pol4 + pol5 + pol6 +
+    lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
     geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
     scale_fill_manual(legend.title, values = col2) +
@@ -269,7 +304,7 @@ whomap <- function (X,
       aspect.ratio = 2.2 / 4,
       plot.title = element_text(size = 16, hjust = 0),
       plot.background = element_rect(fill = background),
-      legend.key = element_rect(color='grey75'),
+      legend.key = element_rect(color = 'grey75'),
       legend.key.height = unit(0.4, "cm"),
       legend.key.width = unit(0.6, "cm"),
       legend.text = element_text(size = 7),
@@ -285,13 +320,8 @@ whomap <- function (X,
   {
     print(p) +
       labs(caption = disclaim) +
-      theme(
-        plot.caption.position = 'plot',
-        plot.caption = element_text(
-          size = 6,
-          hjust = 0.5
-        )
-      )
+      theme(plot.caption.position = 'plot',
+            plot.caption = element_text(size = 6,
+                                        hjust = 0.5))
   }
 }
-
