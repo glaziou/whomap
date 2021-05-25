@@ -34,8 +34,8 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
   \item{legend.title}{
     Optional parameter, legend title.
 }
-  \item{background}{
-    Optional parameter, background colour.
+  \item{water.col}{
+    Optional parameter, colour of oceans and lakes.
 }
   \item{na.label}{
     Optional parameter, legend label for missing values.
@@ -50,7 +50,7 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     Optional parameter, legend position - see legend.pos options in ggplot2.
 }
   \item{recentre}{
-    Optional parameter, a longitude between 0 and 360 which will be the centre of the map.
+    Optional parameter, a longitude between -180 and 180 which will be the centre of the map.
 }
 }
 \details{
@@ -85,7 +85,7 @@ whomap(X=brics, colours=c('red'), legend.pos='none')
 
 # with legend
 brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
-                    var=5:1)
+                    var=1:5)
 whomap(brics, legend.title='BRICS')
 }
 \keyword{ ~map }

@@ -6,12 +6,12 @@ whomap <- function (X,
                     line.col = 'black',
                     map.title = "",
                     legend.title = "",
-                    background = NA,
+                    water.col = 'white',
                     na.label = 'No data',
                     na.col = 'grey95',
                     disclaimer = FALSE,
                     legend.pos = c(0.09, 0.26),
-                    recentre = 29)
+                    recentre = 12)
 {
   if (is.data.frame(X) == FALSE)
     stop("X must be a dataframe")
@@ -26,8 +26,12 @@ whomap <- function (X,
 
 
   #   recentre
-  if (recentre < 0 | recentre > 360)
-    stop('recentre must be a number betwen 0 and 360')
+  stopifnot(is.numeric(recentre))
+  if (recentre <= -180 | recentre >= 180)
+    stop('recentre must be a number betwen -180 and 180')
+  if (recentre < 0) recentre <- recentre + 360
+  if (recentre == 180) recentre <- 0
+
 
 
   #   colors
@@ -211,7 +215,7 @@ whomap <- function (X,
     geom_polygon(
       data = subset(gpoly, id == "Lakes"),
       aes(group = group),
-      fill = I("white"),
+      fill = water.col,
       colour = line.col
     )
   pol3 <-
@@ -289,7 +293,7 @@ whomap <- function (X,
 
   # plot
   zx <- c(-180, 180)
-  if (recentre>0) zx <- zx + c(recentre, recentre - 33)
+  if (recentre>0) zx <- zx + recentre
   zy <- c(min(gworld$lat), max(gworld$lat))
 
   p <-  ggplot(toplot, aes(long, lat)) +
@@ -299,12 +303,12 @@ whomap <- function (X,
     thm1 + thm2 + thm3 +
     geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
     scale_fill_manual(legend.title, values = col2) +
-    coord_cartesian(xlim = zx, ylim = zy) +
+    coord_cartesian(xlim = zx, ylim = zy, expand = FALSE) +
     labs(title = map.title) +
     theme(
       aspect.ratio = 2.2 / 4,
       plot.title = element_text(size = 16, hjust = 0),
-      plot.background = element_rect(fill = background),
+      plot.background = element_rect(fill = water.col),
 #      legend.key = element_rect(color = 'grey75'),
       legend.key.height = unit(0.4, "cm"),
       legend.key.width = unit(0.6, "cm"),
