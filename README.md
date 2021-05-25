@@ -1,6 +1,6 @@
 # R package whomap
 
-Draws choropleth maps of the world, based on WHO shapefiles and scripts from Tom Hyatt and Hazim Timimi.
+Draws choropleth maps of the world, based on WHO shapefiles, adapted from scripts from Tom Hyatt and Hazim Timimi.
 
 
 ## Install:
@@ -26,21 +26,26 @@ brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
 
 whomap(brics, colour='red', legend.pos='none')
 
-![image](https://user-images.githubusercontent.com/233963/119390299-20d3c880-bccd-11eb-9062-31d224a9757a.png)
+![image](https://user-images.githubusercontent.com/233963/119449613-2663f980-bd33-11eb-99ea-fa4f567cba3d.png)
+
+
+Oceans in light blue
+
+![image](https://user-images.githubusercontent.com/233963/119449734-4398c800-bd33-11eb-9f5b-25ce8218c944.png)
 
 
 brics$var <- 1:5
 
 whomap(brics, legend.title='BRICS')
 
-![image](https://user-images.githubusercontent.com/233963/119390355-3812b600-bccd-11eb-895d-c73c0593a9c0.png)
+![image](https://user-images.githubusercontent.com/233963/119449807-60350000-bd33-11eb-82a8-353b88f20be9.png)
 
 
 Recentred on the region Asia-Pacific, with the legend repositioned:
 
-whomap(brics, legend.title = 'BRICS', legend.pos = c(0.3, 0.26), recentre = 173)
+whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163)
 
-![image](https://user-images.githubusercontent.com/233963/119390841-e4ed3300-bccd-11eb-8df5-bc272f365ed3.png)
+![image](https://user-images.githubusercontent.com/233963/119449970-98d4d980-bd33-11eb-89f3-24ca5c8be36f.png)
 
 
 
