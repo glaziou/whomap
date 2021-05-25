@@ -29,7 +29,7 @@ whomap(brics, colour='red', legend.pos='none')
 ![image](https://user-images.githubusercontent.com/233963/119449613-2663f980-bd33-11eb-99ea-fa4f567cba3d.png)
 
 
-Oceans in light blue
+Oceans and lakes in light blue
 
 ![image](https://user-images.githubusercontent.com/233963/119449734-4398c800-bd33-11eb-9f5b-25ce8218c944.png)
 
