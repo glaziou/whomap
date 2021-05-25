@@ -50,11 +50,11 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
     Optional parameter, legend position - see legend.pos options in ggplot2.
 }
   \item{recentre}{
-    Optional parameter, a longitude between -180 and 180 which will be the centre of the map.
+    Optional parameter, a longitude between -180 and 180 degrees positioned at the middle of the map.
 }
 }
 \details{
-    Prints a ggplot2 map.
+    Prints a ggplot2 map centered by default on longitude 12 degrees.
 }
 \value{
 %%  ~Describe the value returned
@@ -67,7 +67,7 @@ whomap(X, colours = NULL, low.col = "#BDD7E7", high.col = "#08519C",
 %% ~put references to the literature/web site here ~
 }
 \author{
-    Philippe Glaziou, based on scripts from Tom Hiatt and Hazim Timimi
+    Philippe Glaziou, adapted from scripts from Tom Hiatt and Hazim Timimi
 }
 \note{
 %%  ~~further notes~~
