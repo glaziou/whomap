@@ -41,7 +41,7 @@ whomap(brics, legend.title='BRICS')
 ![image](https://user-images.githubusercontent.com/233963/119449807-60350000-bd33-11eb-82a8-353b88f20be9.png)
 
 
-Recentred on the region Asia-Pacific, with the legend repositioned:
+Recentered on the region Asia-Pacific, with the legend repositioned:
 
 whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163)
 
