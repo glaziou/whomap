@@ -1,4 +1,40 @@
+#' Choropleth world map
+#'
+#' `whomap()` prints a choropleth world map based on shape files
+#' from the World Health Organization. It requires ggplot2.
+#'
+#' @param X a dataframe. It must contain a variable "iso" (factor)
+#' with standard WHO ISO3 country codes.The categorical variable to be
+#' mapped should be named "var" (see examples).
+#' @param colours A vector of colour values for each category in "var", excepting missing values.
+#' @param low.col First value of a gradient of colours.
+#' @param high.col Last value of a gradient of colours.
+#' @param line.col Colour of country border lines.
+#' @param map.title Map title.
+#' @param legend.title Legend title.
+#' @param water.col Colour of oceans and lakes.
+#' @param na.label Legend lable for missing values.
+#' @param na.col Colour of countries with missing values.
+#' @param disclaimer A boolean, inserts a standard WHO disclaimer.
+#' @param legend.pos A vector of two numbers, positions the legend.
+#' @param recentre A longitude value between -180 and 180 set at the middle of the map.
+#' @return A ggplot2 plot.
+#' @author Philippe Glaziou, adapted from scripts from Tom Hiatt and Hazim Timimi.
+#' @import ggplot2
+#' @import scales
 #' @export
+#' @examples
+#' # A simple world map
+#' whomap(data.frame(iso3=NA, var=NA))
+#'
+#' # Map of the BRICS countries in red, no legend
+#' brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1)
+#' whomap(X=brics, colours=c('red'), legend.pos='none')
+#'
+#' # with legend
+#' brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1:5)
+#' whomap(brics, legend.title='BRICS')
+#'
 whomap <- function (X,
                     colours = NULL,
                     low.col = '#BDD7E7',
@@ -49,7 +85,7 @@ whomap <- function (X,
 
   if (is.null(colours)) {
     xc <- seq(0, 1, length = length(levels(X[["var"]])))
-    col <- seq_gradient_pal(low.col, high.col)(xc)
+    col <- scales::seq_gradient_pal(low.col, high.col)(xc)
   } else
     col <- colours
 
@@ -205,35 +241,35 @@ whomap <- function (X,
 
 
   pol1 <-
-    geom_polygon(data = gworldndash,
+    ggplot2::geom_polygon(data = gworldndash,
                  aes(group = group),
                  colour = line.col,
                  fill = NA)   # map all countries
   lin0 <-
-    geom_path(data = gworlddash2, aes(group = group), colour = line.col)
+    ggplot2::geom_path(data = gworlddash2, aes(group = group), colour = line.col)
   pol2 <-
-    geom_polygon(
+    ggplot2::geom_polygon(
       data = subset(gpoly, id == "Lakes"),
       aes(group = group),
       fill = water.col,
       colour = line.col
     )
   pol3 <-
-    geom_polygon(
+    ggplot2::geom_polygon(
       data = subset(gpoly, id == "Jammu and Kashmir"),
       aes(group = group),
       fill = I("grey75"),
       colour = NA
     )
   pol4 <-
-    geom_polygon(
+    ggplot2::geom_polygon(
       data = AC,
       aes(group = group),
       fill = I("grey75"),
       colour = NA
     )
   pol5 <-
-    geom_polygon(
+    ggplot2::geom_polygon(
       data = subset(gpoly, id == "Abyei"),
       aes(group = group),
       fill = I("grey75"),
@@ -241,35 +277,35 @@ whomap <- function (X,
       linetype = "dotted"
     )
   pol6 <-
-    geom_polygon(
+    ggplot2::geom_polygon(
       data = gworld[gworld$id == 'ESH',],
       aes(group = group),
       fill = I("grey75"),
       colour = line.col
     )
   lin1 <-
-    geom_path(data = subset(gline, id %in% 2),
+    ggplot2::geom_path(data = subset(gline, id %in% 2),
               aes(group = group),
               colour = line.col)
   lin2 <-
-    geom_path(
+    ggplot2::geom_path(
       data = subset(gline, id %in% c(0, 3, 6, 7)),
       aes(group = group),
       colour = line.col,
       linetype = "dashed"
     ) 	# dashed lines over color of country
   lin3 <-
-    geom_path(
+    ggplot2::geom_path(
       data = subset(gline, id %in% c(1, 4, 5)),
       aes(group = group),
       colour = line.col,
       linetype = "dashed"
     )
   lin4 <-
-    geom_path(data = jk2, aes(group = group), colour = line.col)
-  thm1 <- scale_y_continuous('', breaks = NULL)
-  thm2 <- scale_x_continuous('', breaks = NULL)
-  thm3 <- theme_bw()
+    ggplot2::geom_path(data = jk2, aes(group = group), colour = line.col)
+  thm1 <- ggplot2::scale_y_continuous('', breaks = NULL)
+  thm2 <- ggplot2::scale_x_continuous('', breaks = NULL)
+  thm3 <- ggplot2::theme_bw()
 
   #   disclaimer
   disclaim <-
@@ -296,16 +332,16 @@ whomap <- function (X,
   if (recentre>0) zx <- zx + recentre
   zy <- c(min(gworld$lat), max(gworld$lat))
 
-  p <-  ggplot(toplot, aes(long, lat)) +
-    geom_polygon(aes(group = group, fill = var), colour = NA) +
+  p <-  ggplot2::ggplot(toplot, aes(x=long, y=lat)) +
+    ggplot2::geom_polygon(aes(group = group, fill = var), colour = NA) +
     pol1 + pol2 + pol3 + pol4 + pol5 + pol6 +
     lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
-    geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
-    scale_fill_manual(legend.title, values = col2) +
-    coord_cartesian(xlim = zx, ylim = zy, expand = FALSE) +
-    labs(title = map.title) +
-    theme(
+    ggplot2::geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
+    ggplot2::scale_fill_manual(legend.title, values = col2) +
+    ggplot2::coord_cartesian(xlim = zx, ylim = zy, expand = FALSE) +
+    ggplot2::labs(title = map.title) +
+    ggplot2::theme(
       aspect.ratio = 2.2 / 4,
       plot.title = element_text(size = 16, hjust = 0),
       plot.background = element_rect(fill = water.col),
@@ -324,9 +360,11 @@ whomap <- function (X,
   else
   {
     print(p) +
-      labs(caption = disclaim) +
-      theme(plot.caption.position = 'plot',
+      ggplot2::labs(caption = disclaim) +
+      ggplot2::theme(plot.caption.position = 'plot',
             plot.caption = element_text(size = 6,
                                         hjust = 0.5))
   }
 }
+
+#' @export
