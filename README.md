@@ -48,6 +48,3 @@ whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163)
 
 ![image](https://user-images.githubusercontent.com/233963/119449970-98d4d980-bd33-11eb-89f3-24ca5c8be36f.png)
 
-
-
-
