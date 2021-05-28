@@ -1,5 +1,5 @@
 # R package whomap
-version 0.7.8
+version 0.7.9
 
 Draws choropleth maps of the world, based on WHO shapefiles, adapted from scripts from Tom Hiatt and Hazim Timimi.
 
