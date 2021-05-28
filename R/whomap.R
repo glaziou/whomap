@@ -25,7 +25,7 @@
 #' @export
 #' @examples
 #' # A simple world map
-#' whomap(data.frame(iso3=NA, var=NA))
+#' whomap()
 #'
 #' # Map of the BRICS countries in red, no legend
 #' brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1)
@@ -35,7 +35,7 @@
 #' brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1:5)
 #' whomap(brics, legend.title='BRICS')
 #'
-whomap <- function (X,
+whomap <- function (X = data.frame(iso3=NA, var=NA),
                     colours = NULL,
                     low.col = '#BDD7E7',
                     high.col = '#08519C',
@@ -308,11 +308,12 @@ whomap <- function (X,
   thm3 <- ggplot2::theme_bw()
 
   #   disclaimer
-  disclaim <-
-    "\uA9 World Health Organization 2015. All rights reserved.
+  disclaim <- paste(
+    "\uA9 World Health Organization", format(Sys.Date(), "%Y"), ". All rights reserved.
   The designations employed and the presentation of the material in this publication do not imply the expression of any opinion whatsoever on the part of
   the World Health Organization concerning the legal status of any country, territory, city or area or of its authorities,or concerning the delimitation
   of its frontiers or boundaries. Dotted and dashed lines on maps represent approximate borderlines for which there may not yet be full agreement."
+  )
 
   #   merge data
   toplot <-

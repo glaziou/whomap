@@ -5,7 +5,7 @@
 \title{Choropleth world map}
 \usage{
 whomap(
-  X,
+  X = data.frame(iso3 = NA, var = NA),
   colours = NULL,
   low.col = "#BDD7E7",
   high.col = "#08519C",
@@ -50,7 +50,7 @@ mapped should be named "var" (see examples).}
 \item{recentre}{A longitude value between -180 and 180 set at the middle of the map.}
 }
 \value{
-a ggplot2 plot.
+A ggplot2 plot.
 }
 \description{
 `whomap()` prints a choropleth world map based on shape files
@@ -58,7 +58,7 @@ from the World Health Organization. It requires ggplot2.
 }
 \examples{
 # A simple world map
-whomap(data.frame(iso3=NA, var=NA))
+whomap()
 
 # Map of the BRICS countries in red, no legend
 brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1)
