@@ -230,36 +230,36 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
 
   pol1 <-
     ggplot2::geom_polygon(data = gworldndash,
-                 aes_(group = ~group),
+                 aes(group = .data$group),
                  colour = line.col,
                  fill = NA)   # map all countries
   lin0 <-
-    ggplot2::geom_path(data = gworlddash2, aes_(group = ~group), colour = line.col)
+    ggplot2::geom_path(data = gworlddash2, aes(group = .data$group), colour = line.col)
   pol2 <-
     ggplot2::geom_polygon(
       data = gpoly[gpoly$id == "Lakes", ],
-      aes_(group = ~group),
+      aes(group = .data$group),
       fill = water.col,
       colour = line.col
     )
   pol3 <-
     ggplot2::geom_polygon(
       data = gpoly[gpoly$id == "Jammu and Kashmir", ],
-      aes_(group = ~group),
+      aes(group = .data$group),
       fill = I("grey75"),
       colour = NA
     )
   pol4 <-
     ggplot2::geom_polygon(
       data = AC,
-      aes_(group = ~group),
+      aes(group = .data$group),
       fill = I("grey75"),
       colour = NA
     )
   pol5 <-
     ggplot2::geom_polygon(
       data = gpoly[gpoly$id == "Abyei", ],
-      aes_(group = ~group),
+      aes(group = .data$group),
       fill = I("grey75"),
       colour = line.col,
       linetype = "dotted"
@@ -267,30 +267,30 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   pol6 <-
     ggplot2::geom_polygon(
       data = gworld[gworld$id == 'ESH',],
-      aes_(group = ~group),
+      aes(group = .data$group),
       fill = I("grey75"),
       colour = line.col
     )
   lin1 <-
     ggplot2::geom_path(data = gline[gline$id %in% 2, ],
-              aes_(group = ~group),
+              aes(group = .data$group),
               colour = line.col)
   lin2 <-
     ggplot2::geom_path(
       data = gline[gline$id %in% c(0, 3, 6, 7), ],
-      aes_(group = ~group),
+      aes(group = .data$group),
       colour = line.col,
       linetype = "dashed"
     ) 	# dashed lines over color of country
   lin3 <-
     ggplot2::geom_path(
       data = gline[gline$id %in% c(1, 4, 5), ],
-      aes_(group = ~group),
+      aes(group = .data$group),
       colour = line.col,
       linetype = "dashed"
     )
   lin4 <-
-    ggplot2::geom_path(data = jk2, aes_(group = ~group), colour = line.col)
+    ggplot2::geom_path(data = jk2, aes(group = .data$group), colour = line.col)
   thm1 <- ggplot2::scale_y_continuous('', breaks = NULL)
   thm2 <- ggplot2::scale_x_continuous('', breaks = NULL)
   thm3 <- ggplot2::theme_bw()
@@ -321,12 +321,12 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   if (recentre>0) zx <- zx + recentre
   zy <- c(min(gworld$lat), max(gworld$lat))
 
-  p <-  ggplot2::ggplot(toplot, aes_(x=~long, y=~lat)) +
-    ggplot2::geom_polygon(aes_(group = ~group, fill = ~var), colour = NA) +
+  p <-  ggplot2::ggplot(toplot, aes(x=.data$long, y=.data$lat)) +
+    ggplot2::geom_polygon(aes(group = .data$group, fill = .data$var), colour = NA) +
     pol1 + pol2 + pol3 + pol4 + pol5 + pol6 +
     lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
-    ggplot2::geom_polygon(aes_(group = ~group, fill = ~var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
+    ggplot2::geom_polygon(aes(group = .data$group, fill = .data$var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
     ggplot2::scale_fill_manual(legend.title, values = col2) +
     ggplot2::coord_cartesian(xlim = zx, ylim = zy, expand = FALSE) +
     ggplot2::labs(title = map.title) +
