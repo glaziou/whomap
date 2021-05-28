@@ -54,11 +54,8 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   if (all(c("iso3", "var") %in% names(X)) == FALSE)
     stop("X must have two variables named 'iso3' and 'var'")
 
-  X <- as.data.frame(subset(X, !is.na(X$var) & X$var != ""))
-  if (is.factor(X$var))
-    levels(X$var) <- droplevels(X$var, exclude = '')
-  else
-    X$var <- as.factor(X$var)
+  X <- as.data.frame(X[!is.na(X$var) & X$var != "", ])
+  if (!is.factor(X$var)) X$var <- as.factor(X$var)
 
 
   #   recentre
@@ -108,7 +105,7 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
 
   #  add missing circles for ASM, PYF, MNP, WLF
   asm <-
-    subset(gworld, id == "WSM")
+    gworld[gworld$id == "WSM", ]
   asm$id <-
     "ASM"
   asm$group <-
@@ -116,7 +113,7 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   asm$long <- asm$long + 2
   asm$lat <- asm$lat - 0.5
   pyf <-
-    subset(gworld, id == "COK")
+    gworld[gworld$id == "COK", ]
   pyf$id <-
     "PYF"
   pyf$group <-
@@ -124,7 +121,7 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   pyf$long <- pyf$long + 10
   pyf$lat <- pyf$lat + 1
   mnp <-
-    subset(gworld, id == "GUM")
+    gworld[gworld$id == "GUM", ]
   mnp$id <-
     "MNP"
   mnp$group <-
@@ -132,7 +129,7 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   mnp$long <- mnp$long + 0.5
   mnp$lat <- mnp$lat + 2
   wlf <-
-    subset(gworld, id == "WSM")
+    gworld[gworld$id == "WSM", ]
   wlf$id <-
     "WLF"
   wlf$group <-
@@ -156,66 +153,57 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
 
   # map parts
   dashiso3s <- c("EGY", "ISR", "KOR", "PRK", "PSE", "SDN", "SSD")
-  gworldndash <- subset(gworld, !id %in% dashiso3s)
-  gworlddash <- subset(gworld, id %in% dashiso3s)
+  gworldndash <- gworld[!gworld$id %in% dashiso3s, ]
+  gworlddash <- gworld[gworld$id %in% dashiso3s, ]
   gworlddash$group2 <- as.character(gworlddash$group)
 
   SSD <-
-    subset(gworlddash, !(long > 25 &
-                           lat < 13 &
-                           long < 34 & lat > 9) & id == 'SSD')
+    gworlddash[!(gworlddash$long > 25 &
+                           gworlddash$lat < 13 &
+                           gworlddash$long < 34 & gworlddash$lat > 9) & gworlddash$id == 'SSD', ]
   SSD[24:27, 'group2'] <- 'SSD.1.2'
   SDN <-
-    subset(
-      gworlddash,
-      !(long > 25 &
-          lat < 13 &
-          long < 34 &
-          lat > 9) &
-        !(long > 33.2 &
-            lat < 23 & long < 35 & lat > 21.5) & id == 'SDN'
-    )
+      gworlddash[!(gworlddash$long > 25 &
+                     gworlddash$lat < 13 &
+                     gworlddash$long < 34 &
+                     gworlddash$lat > 9) &
+        !(gworlddash$long > 33.2 &
+            gworlddash$lat < 23 & gworlddash$long < 35 & gworlddash$lat > 21.5) & gworlddash$id == 'SDN', ]
   SDN[14:31, 'group2'] <- 'SDN.1.2'
   SDN[32:33, 'group2'] <- 'SDN.1.3'
   EGY <-
-    subset(gworlddash,
-           !(long > 33.2 &
-               lat < 23 & long < 35 & lat > 21.5) & id == 'EGY')
+    gworlddash[!(gworlddash$long > 33.2 &
+                   gworlddash$lat < 23 & gworlddash$long < 35 & gworlddash$lat > 21.5) & gworlddash$id == 'EGY', ]
   EGY[13:15, 'group2'] <- 'EGY.1.2'
   ISR <-
-    subset(
-      gworlddash,
-      !(long > 34.8 &
-          lat < 32.6 &
-          long < 35.4 &
-          lat > 31.3) &
-        !(long > 34.5 &
-            lat < 31.55 & long < 34.6 & lat > 31.5) & id == 'ISR'
-    )
+      gworlddash[!(gworlddash$long > 34.8 &
+                     gworlddash$lat < 32.6 &
+                     gworlddash$long < 35.4 &
+                     gworlddash$lat > 31.3) &
+        !(gworlddash$long > 34.5 &
+            gworlddash$lat < 31.55 & gworlddash$long < 34.6 & gworlddash$lat > 31.5) & gworlddash$id == 'ISR', ]
   ISR[7:15, 'group2'] <- 'ISR.1.2'
   ISR[16:18, 'group2'] <- 'ISR.1.3'
-  PSE <- subset(gworlddash, id == 'PSE')
+  PSE <- gworlddash[gworlddash$id == 'PSE', ]
   PSE <- PSE[16:17,]
   KOR <-
-    subset(gworlddash,
-           !(long > 127 &
-               lat < 38.5 & long < 127.5 & lat > 38) & id == 'KOR')
+    gworlddash[!(gworlddash$long > 127 &
+                   gworlddash$lat < 38.5 & gworlddash$long < 127.5 & gworlddash$lat > 38) & gworlddash$id == 'KOR', ]
   KOR <- KOR[1:10,]
   PRK <-
-    subset(gworlddash,
-           !(long > 127 &
-               lat < 38.5 & long < 127.5 & lat > 38) & id == 'PRK')
+    gworlddash[!(gworlddash$long > 127 &
+                   gworlddash$lat < 38.5 & gworlddash$long < 127.5 & gworlddash$lat > 38) & gworlddash$id == 'PRK', ]
   PRK[5:12, 'group2'] <- 'PRK.1.2'
 
   gworlddash2 <- rbind(SSD, SDN, EGY, ISR, PSE, KOR, PRK)
 
   # Create solid lines for Jammu Kashmir
-  jk1 <- subset(gpoly, id == "Jammu and Kashmir")
+  jk1 <- gpoly[gpoly$id == "Jammu and Kashmir", ]
   jk1$group2 <- as.character(jk1$group)
   jk1[1:2, 'group2'] <- 'Jammu and Kashmir.2'
   jk1[8:16, 'group2'] <- 'Jammu and Kashmir.3'
   jk1[21:22, 'group2'] <- 'Jammu and Kashmir.4'
-  jk2 <- subset(jk1, group2 != 'Jammu and Kashmir.1')
+  jk2 <- jk1[jk1$group2 != 'Jammu and Kashmir.1', ]
 
 
   # recentring
@@ -242,36 +230,36 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
 
   pol1 <-
     ggplot2::geom_polygon(data = gworldndash,
-                 aes(group = group),
+                 aes_(group = ~group),
                  colour = line.col,
                  fill = NA)   # map all countries
   lin0 <-
-    ggplot2::geom_path(data = gworlddash2, aes(group = group), colour = line.col)
+    ggplot2::geom_path(data = gworlddash2, aes_(group = ~group), colour = line.col)
   pol2 <-
     ggplot2::geom_polygon(
-      data = subset(gpoly, id == "Lakes"),
-      aes(group = group),
+      data = gpoly[gpoly$id == "Lakes", ],
+      aes_(group = ~group),
       fill = water.col,
       colour = line.col
     )
   pol3 <-
     ggplot2::geom_polygon(
-      data = subset(gpoly, id == "Jammu and Kashmir"),
-      aes(group = group),
+      data = gpoly[gpoly$id == "Jammu and Kashmir", ],
+      aes_(group = ~group),
       fill = I("grey75"),
       colour = NA
     )
   pol4 <-
     ggplot2::geom_polygon(
       data = AC,
-      aes(group = group),
+      aes_(group = ~group),
       fill = I("grey75"),
       colour = NA
     )
   pol5 <-
     ggplot2::geom_polygon(
-      data = subset(gpoly, id == "Abyei"),
-      aes(group = group),
+      data = gpoly[gpoly$id == "Abyei", ],
+      aes_(group = ~group),
       fill = I("grey75"),
       colour = line.col,
       linetype = "dotted"
@@ -279,30 +267,30 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   pol6 <-
     ggplot2::geom_polygon(
       data = gworld[gworld$id == 'ESH',],
-      aes(group = group),
+      aes_(group = ~group),
       fill = I("grey75"),
       colour = line.col
     )
   lin1 <-
-    ggplot2::geom_path(data = subset(gline, id %in% 2),
-              aes(group = group),
+    ggplot2::geom_path(data = gline[gline$id %in% 2, ],
+              aes_(group = ~group),
               colour = line.col)
   lin2 <-
     ggplot2::geom_path(
-      data = subset(gline, id %in% c(0, 3, 6, 7)),
-      aes(group = group),
+      data = gline[gline$id %in% c(0, 3, 6, 7), ],
+      aes_(group = ~group),
       colour = line.col,
       linetype = "dashed"
     ) 	# dashed lines over color of country
   lin3 <-
     ggplot2::geom_path(
-      data = subset(gline, id %in% c(1, 4, 5)),
-      aes(group = group),
+      data = gline[gline$id %in% c(1, 4, 5), ],
+      aes_(group = ~group),
       colour = line.col,
       linetype = "dashed"
     )
   lin4 <-
-    ggplot2::geom_path(data = jk2, aes(group = group), colour = line.col)
+    ggplot2::geom_path(data = jk2, aes_(group = ~group), colour = line.col)
   thm1 <- ggplot2::scale_y_continuous('', breaks = NULL)
   thm2 <- ggplot2::scale_x_continuous('', breaks = NULL)
   thm3 <- ggplot2::theme_bw()
@@ -333,12 +321,12 @@ whomap <- function (X = data.frame(iso3=NA, var=NA),
   if (recentre>0) zx <- zx + recentre
   zy <- c(min(gworld$lat), max(gworld$lat))
 
-  p <-  ggplot2::ggplot(toplot, aes(x=long, y=lat)) +
-    ggplot2::geom_polygon(aes(group = group, fill = var), colour = NA) +
+  p <-  ggplot2::ggplot(toplot, aes_(x=~long, y=~lat)) +
+    ggplot2::geom_polygon(aes_(group = ~group, fill = ~var), colour = NA) +
     pol1 + pol2 + pol3 + pol4 + pol5 + pol6 +
     lin0 + lin1 + lin2 + lin3 + lin4 +
     thm1 + thm2 + thm3 +
-    ggplot2::geom_polygon(aes(group = group, fill = var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
+    ggplot2::geom_polygon(aes_(group = ~group, fill = ~var), toplot[toplot$id %in% c('SWZ', 'LSO'),]) +
     ggplot2::scale_fill_manual(legend.title, values = col2) +
     ggplot2::coord_cartesian(xlim = zx, ylim = zy, expand = FALSE) +
     ggplot2::labs(title = map.title) +
