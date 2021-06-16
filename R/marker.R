@@ -15,14 +15,14 @@
 #' @examples
 #' brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1:5)
 #' whomap(brics, legend.title='BRICS', legend.pos=c(0.14, 0.34)) +
-#'    add_marker('BRA', lab='Subnational\ndata')
+#'    add_marker(c('BRA','RUS'), lab='Subnational\ndata')
 #'
 add_marker <- function(iso3 = NA_character_,
                        shape = 17,
                        col = 'red',
                        size = 3,
                        lab = '') {
-  if (!(iso3 %in% centroid$id))
+  if (!all(iso3 %in% centroid$id))
     stop("iso3 should only include valid ISO3 country codes")
 
   dta1 <- dta2 <- centroid[centroid$id %in% iso3, ]

@@ -2,7 +2,7 @@
 % Please edit documentation in R/marker.R
 \name{add_marker}
 \alias{add_marker}
-\title{Choropleth world map, add secondary country markers}
+\title{Choropleth world maps, add secondary country markers}
 \usage{
 add_marker(iso3 = NA_character_, shape = 17, col = "red", size = 3, lab = "")
 }
@@ -27,7 +27,7 @@ marker located at the centroid of listed countries and territories.
 \examples{
 brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'), var=1:5)
 whomap(brics, legend.title='BRICS', legend.pos=c(0.14, 0.34)) +
-   add_marker('BRA', lab='Subnational\ndata')
+   add_marker(c('BRA','RUS'), lab='Subnational\ndata')
 
 }
 \author{

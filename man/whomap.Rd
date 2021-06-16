@@ -2,7 +2,7 @@
 % Please edit documentation in R/whomap.R
 \name{whomap}
 \alias{whomap}
-\title{Choropleth world map}
+\title{Choropleth world maps}
 \usage{
 whomap(
   X = data.frame(iso3 = NA, var = NA),
