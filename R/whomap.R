@@ -670,7 +670,7 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
   thm2 <- ggplot2::scale_x_continuous('', breaks = NULL)
   thm3 <- ggplot2::theme_bw()
 
-  #   merge data
+  # merge data
   centres <- merge(X, centroid, by.x = 'iso3', by.y = 'id')
 
   # plot
@@ -722,3 +722,4 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
 
   return(p)
 }
+
