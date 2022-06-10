@@ -10,14 +10,16 @@ bubblemap(
   line.col = "black",
   map.title = "",
   legend.title = "",
-  water.col = "white",
+  water.col = "lightskyblue",
   bubble.col = "orange",
   bubble.alpha = 0.4,
   scale.breaks = waiver(),
   scale.limits = NULL,
   scale.labels = waiver(),
+  line.width = 0.5,
   legend.pos = c(0.14, 0.26),
-  recentre = 12
+  recentre = 12,
+  hidef = FALSE
 )
 }
 \arguments{
@@ -45,6 +47,8 @@ with standard WHO ISO3 country codes and a variable "size" (bubble sizes).}
 \item{legend.pos}{A vector of two numbers, positions the legend.}
 
 \item{recentre}{A longitude value between -180 and 180 set at the middle of the map.}
+
+\item{hidef}{Highly detailed map (slow rendering).}
 }
 \value{
 A ggplot2 plot.

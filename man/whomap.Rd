@@ -10,14 +10,16 @@ whomap(
   low.col = "#BDD7E7",
   high.col = "#08519C",
   line.col = "black",
+  line.width = 0.5,
   map.title = "",
   legend.title = "",
-  water.col = "white",
+  water.col = "lightskyblue",
   na.label = "No data",
   na.col = "grey95",
   disclaimer = FALSE,
   legend.pos = c(0.14, 0.26),
-  recentre = 12
+  recentre = 12,
+  hidef = FALSE
 )
 }
 \arguments{
@@ -48,6 +50,8 @@ mapped should be named "var" (see examples).}
 \item{legend.pos}{A vector of two numbers, positions the legend.}
 
 \item{recentre}{A longitude value between -180 and 180 set at the middle of the map.}
+
+\item{hidef}{Highly detailed map (slow rendering).}
 }
 \value{
 A ggplot2 plot.

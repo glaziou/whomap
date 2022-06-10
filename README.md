@@ -1,7 +1,7 @@
 # R package whomap
-version 0.8.3
+version 0.9.0
 
-Draws choropleth maps of the world, based on WHO shapefiles, adapted from scripts from Tom Hiatt and Hazim Timimi.
+Draws choropleth maps of the world, based on WHO shapefiles (simpler or more detailed issued in 2022), adapted from scripts from Tom Hiatt and Hazim Timimi.
 
 
 ## Install:
@@ -51,6 +51,9 @@ Recentered on the region Asia-Pacific, with the legend repositioned:
 whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163)
 
 ![image](https://user-images.githubusercontent.com/233963/119449970-98d4d980-bd33-11eb-89f3-24ca5c8be36f.png)
+
+
+The above maps can be drawn using high-definition 2022 WHO shapefiles by passing a parameter "hidef = T" (default is F). The drawing in high-definition is considerably slower.
 
 
 ### Bivariate

@@ -18,6 +18,7 @@
 #' @param disclaimer A boolean, inserts a standard WHO disclaimer.
 #' @param legend.pos A vector of two numbers, positions the legend.
 #' @param recentre A longitude value between -180 and 180 set at the middle of the map.
+#' @param hidef Highly detailed map (slow rendering).
 #' @return A ggplot2 plot.
 #' @author Philippe Glaziou, adapted from scripts from Tom Hiatt and Hazim Timimi.
 #' @import ggplot2
@@ -40,14 +41,85 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
                     low.col = '#BDD7E7',
                     high.col = '#08519C',
                     line.col = 'black',
+                    line.width = 0.5,
                     map.title = "",
                     legend.title = "",
-                    water.col = 'white',
+                    water.col = 'lightskyblue',
                     na.label = 'No data',
                     na.col = 'grey95',
                     disclaimer = FALSE,
                     legend.pos = c(0.14, 0.26),
-                    recentre = 12)
+                    recentre = 12,
+                    hidef = FALSE
+                    )
+{
+  if (is.data.frame(X) == FALSE)
+    stop("X must be a dataframe")
+  if (all(c("iso3", "var") %in% names(X)) == FALSE)
+    stop("X must have two variables named 'iso3' and 'var'")
+
+  if (hidef == FALSE)
+    .lodef(
+      X,
+      colours,
+      low.col,
+      high.col,
+      line.col,
+      map.title,
+      legend.title,
+      water.col,
+      na.label,
+      na.col,
+      disclaimer,
+      legend.pos,
+      recentre
+    )
+  else
+    .hidef(
+      X,
+      colours,
+      low.col,
+      high.col,
+      line.col,
+      line.width,
+      map.title,
+      legend.title,
+      water.col,
+      na.label,
+      na.col,
+      disclaimer,
+      legend.pos,
+      recentre
+    )
+}
+
+
+
+
+#' Choropleth world maps
+#'
+#' `.lodef()` prints a choropleth world map based on shape files
+#' from the World Health Organization. It requires ggplot2.
+#'
+#' @return A ggplot2 plot.
+#' @author Philippe Glaziou, adapted from scripts from Tom Hiatt and Hazim Timimi.
+#' @import ggplot2
+#' @import scales
+#' @export
+#'
+.lodef <- function (X,
+                    colours,
+                    low.col,
+                    high.col,
+                    line.col,
+                    map.title,
+                    legend.title,
+                    water.col,
+                    na.label,
+                    na.col,
+                    disclaimer,
+                    legend.pos,
+                    recentre)
 {
   if (is.data.frame(X) == FALSE)
     stop("X must be a dataframe")
@@ -397,6 +469,246 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
 
 
 
+# data prep
+# library(data.table)
+# library(ggplot2)
+# library(rgdal)
+# library(broom)
+# ogrInfo('../WHOshapefiles','GLOBAL_ADM0')
+# gw <- tidy(readOGR('../WHOshapefiles','GLOBAL_ADM0', stringsAsFactors = F), region='ISO_3_CODE')
+# dispa <- tidy(readOGR('../WHOshapefiles','Detailed_Boundary_Disputed_Areas', stringsAsFactors = F), region='ISO_3_CODE')
+# dispb <- tidy(readOGR('../WHOshapefiles','Detailed_Boundary_Disputed_Borders', stringsAsFactors = F), region='ISO_3_CODE')
+#
+#
+
+
+
+
+
+
+#' Choropleth world maps
+#'
+#' `.hidef()` prints a choropleth world map based on shape files
+#' from the World Health Organization. It requires ggplot2.
+#'
+#' @return A ggplot2 plot.
+#' @author Philippe Glaziou
+#' @import ggplot2
+#' @import scales
+#' @export
+#'
+.hidef <- function (X,
+                    colours,
+                    low.col,
+                    high.col,
+                    line.col,
+                    line.width,
+                    map.title,
+                    legend.title,
+                    water.col,
+                    na.label,
+                    na.col,
+                    disclaimer,
+                    legend.pos,
+                    recentre)
+{
+  if (is.data.frame(X) == FALSE)
+    stop("X must be a dataframe")
+  if (all(c("iso3", "var") %in% names(X)) == FALSE)
+    stop("X must have two variables named 'iso3' and 'var'")
+
+  X <- as.data.frame(X[!is.na(X$var) & X$var != "",])
+  if (is.factor(X$var) &
+      !is.na(match('', levels(X$var))))
+    X <- droplevels(X[!grepl("^\\s*$", X$var), , drop = FALSE])
+  if (!is.factor(X$var))
+    X$var <- as.factor(X$var)
+
+
+  # recentre
+  stopifnot(is.numeric(recentre))
+  if (recentre <= -180 | recentre >= 180)
+    stop('recentre must be a number betwen -180 and 180')
+  if (recentre < 0)
+    recentre <- recentre + 360
+  if (recentre == 180)
+    recentre <- 0
+
+
+
+  # colors
+  if (!is.null(colours) &
+      length(levels(X$var)) != length(colours))
+    stop(
+      paste(
+        "var categories (excluding missing values) and colors do not match. var has",
+        length(unique(X[["var"]])),
+        "levels and colours has",
+        length(colours),
+        "levels"
+      )
+    )
+
+  if (is.null(colours)) {
+    xc <- seq(0, 1, length = length(levels(X[["var"]])))
+    col <- scales::seq_gradient_pal(low.col, high.col)(xc)
+  } else
+    col <- colours
+
+  col2 <- c(col, na.col, 'grey75')
+
+
+  #   add GUF (=FRA), SJM (=NOR), ESH (NA), TWN (=CHN)
+  x1 <- X[X$iso3 == 'FRA',]
+  if (dim(x1)[2] > 0 &
+      is.na(match('GUF', X$iso3)))
+    x1$iso3[x1$iso3 == 'FRA'] <- 'GUF'
+  x2 <- X[X$iso3 == 'NOR',]
+  if (dim(x2)[2] > 0 &
+      is.na(match('SJM', X$iso3)))
+    x2$iso3[x2$iso3 == 'NOR'] <- 'SJM'
+  x3 <- X[X$iso3 == 'CHN',]
+  if (dim(x3)[2] > 0 &
+      is.na(match('TWN', X$iso3)))
+    x3$iso3[x3$iso3 == 'CHN'] <- 'TWN'
+  x4 <- X[1, ]
+  x4$iso3 <- 'ESH'
+
+  X <- rbind(X, x1, x2, x3, x4)
+
+
+  # recentring
+  if (recentre > 0) {
+    duplon <- function(dta) {
+      dta2 <- dta
+      dta2$long <- dta2$long + 360
+      dta2$order <- dta2$order + 10000
+      dta2$group <- as.factor(paste(as.character(dta2$group), 'b'))
+      return(rbind(dta, dta2))
+    }
+    gw <- duplon(gw)
+    gpoly <- duplon(gpoly)
+    dispa <- duplon(dispa)
+    dispb <- duplon(dispb)
+  }
+
+  pol <-
+    ggplot2::geom_polygon(
+      data = gw,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      fill = NA
+    )
+  d1 <-
+    ggplot2::geom_polygon(
+      data = dispa,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      linetype = 'dashed',
+      fill = NA
+    )
+  d2 <-
+    ggplot2::geom_polygon(
+      data = dispb,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      linetype = 'dashed',
+      fill = NA
+    )
+
+  lakes <-
+    ggplot2::geom_polygon(
+      data = gpoly[gpoly$id == "Lakes",],
+      aes(group = .data$group),
+      fill = water.col,
+      colour = line.col,
+      size = line.width
+    )
+
+  lin <-
+    ggplot2::geom_path(data = gw,
+                       aes(group = .data$group),
+                       colour = line.col,
+                       size = line.width)
+
+  thm1 <- ggplot2::scale_y_continuous('', breaks = NULL)
+  thm2 <- ggplot2::scale_x_continuous('', breaks = NULL)
+  thm3 <- ggplot2::theme_bw()
+
+  # disclaimer
+  disclaim <- paste(
+    "\uA9 World Health Organization",
+    format(Sys.Date(), "%Y"),
+    ". All rights reserved.
+  The designations employed and the presentation of the material in this publication do not imply the expression of any opinion whatsoever on the part of
+  the World Health Organization concerning the legal status of any country, territory, city or area or of its authorities,or concerning the delimitation
+  of its frontiers or boundaries. Dotted and dashed lines on maps represent approximate borderlines for which there may not yet be full agreement."
+  )
+
+  # merge data
+  toplot <-
+    merge(gw,
+          X,
+          by.x = 'id',
+          by.y = 'iso3',
+          all.x = TRUE)
+  toplot <- toplot[order(toplot$order),]
+  levels(toplot$var) <-
+    c(levels(toplot$var), na.label, 'Not applicable')
+  toplot[is.na(toplot$var), "var"] <- na.label
+  toplot[toplot$id == "ESH", "var"] <- 'Not applicable'
+
+  # plot
+  zx <- c(-180, 180)
+  if (recentre > 0)
+    zx <- zx + recentre
+  zy <- c(min(gw$lat), max(gw$lat))
+
+  p <-
+    ggplot2::ggplot(toplot, aes(x = .data$long, y = .data$lat)) +
+    ggplot2::geom_polygon(aes(group = .data$group, fill = .data$var), colour = NA, size = line.width) +
+    lakes +
+    d1 + d2 +
+    lin +
+    thm1 + thm2 + thm3 +
+    ggplot2::geom_polygon(aes(group = .data$group, fill = .data$var), toplot[toplot$id %in% c('SWZ', 'LSO'), ]) +
+    ggplot2::scale_fill_manual(legend.title, values = col2) +
+    ggplot2::coord_cartesian(xlim = zx,
+                             ylim = zy,
+                             expand = FALSE) +
+    ggplot2::labs(title = map.title) +
+    ggplot2::theme(
+      aspect.ratio = 2.2 / 4,
+      plot.title = element_text(size = 16, hjust = 0),
+      plot.background = element_rect(fill = water.col),
+      legend.key.height = unit(0.4, "cm"),
+      legend.key.width = unit(0.6, "cm"),
+      legend.text = element_text(size = 7),
+      legend.position = legend.pos,
+      legend.justification = c(0.5, 1),
+      legend.title = element_text(size = 7, hjust = 0),
+      rect = element_blank()
+    )
+
+  if (disclaimer == FALSE)
+    return(p)
+  else
+  {
+    return(p) +
+      ggplot2::labs(caption = disclaim) +
+      ggplot2::theme(plot.caption.position = 'plot',
+                     plot.caption = element_text(size = 6,
+                                                 hjust = 0.5))
+  }
+}
+
+
+
+
+
 
 
 #' `bubblemap()` prints a world map based on shape files
@@ -415,6 +727,7 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
 #' @param scale.labels Scale labels.
 #' @param legend.pos A vector of two numbers, positions the legend.
 #' @param recentre A longitude value between -180 and 180 set at the middle of the map.
+#' @param hidef Highly detailed map (slow rendering).
 #' @return A ggplot2 plot.
 #' @author Philippe Glaziou, adapted from scripts from Tom Hiatt and Hazim Timimi.
 #' @import ggplot2
@@ -429,14 +742,80 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
                        line.col = 'black',
                        map.title = "",
                        legend.title = "",
-                       water.col = 'white',
+                       water.col = 'lightskyblue',
                        bubble.col = 'orange',
                        bubble.alpha = 0.4,
                        scale.breaks = waiver(),
                        scale.limits = NULL,
                        scale.labels = waiver(),
+                       line.width = 0.5,
                        legend.pos = c(0.14, 0.26),
-                       recentre = 12)
+                       recentre = 12,
+                       hidef = FALSE)
+{
+  if (is.data.frame(X) == FALSE)
+    stop("X must be a dataframe")
+  if (all(c("iso3", "size") %in% names(X)) == FALSE)
+    stop("X must have two variables named 'iso3' and 'size'")
+
+
+  if (hidef == FALSE)
+    .lodefbb(
+      X,
+      line.col,
+      map.title,
+      legend.title,
+      water.col,
+      bubble.col,
+      bubble.alpha,
+      scale.breaks,
+      scale.limits,
+      scale.labels,
+      legend.pos,
+      recentre
+    )
+  else
+    .hidefbb(
+      X,
+      line.col,
+      map.title,
+      legend.title,
+      water.col,
+      bubble.col,
+      bubble.alpha,
+      scale.breaks,
+      scale.limits,
+      scale.labels,
+      line.width,
+      legend.pos,
+      recentre
+    )
+}
+
+
+
+
+#' `.lodefbb()` prints a world map based on shape files
+#' from the World Health Organization. It requires ggplot2.
+#'
+#' @return A ggplot2 plot.
+#' @author Philippe Glaziou, adapted from scripts from Tom Hiatt and Hazim Timimi.
+#' @import ggplot2
+#' @import scales
+#' @export
+#'
+.lodefbb <- function (X,
+                     line.col,
+                     map.title,
+                     legend.title,
+                     water.col,
+                     bubble.col,
+                     bubble.alpha,
+                     scale.breaks,
+                     scale.limits,
+                     scale.labels,
+                     legend.pos,
+                     recentre)
 {
   if (is.data.frame(X) == FALSE)
     stop("X must be a dataframe")
@@ -723,3 +1102,161 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
   return(p)
 }
 
+
+
+
+
+
+
+#' `.hidefbb()` prints a world map based on shape files
+#' from the World Health Organization. It requires ggplot2.
+#'
+#' @return A ggplot2 plot.
+#' @author Philippe Glaziou
+#' @import ggplot2
+#' @import scales
+#' @export
+#'
+.hidefbb <- function (X,
+                     line.col,
+                     map.title,
+                     legend.title,
+                     water.col,
+                     bubble.col,
+                     bubble.alpha,
+                     scale.breaks,
+                     scale.limits,
+                     scale.labels,
+                     line.width,
+                     legend.pos,
+                     recentre)
+{
+  if (is.data.frame(X) == FALSE)
+    stop("X must be a dataframe")
+  if (all(c("iso3", "size") %in% names(X)) == FALSE)
+    stop("X must have two variables named 'iso3' and 'size'")
+
+  #   recentre
+  stopifnot(is.numeric(recentre))
+  if (recentre <= -180 | recentre >= 180)
+    stop('recentre must be a number betwen -180 and 180')
+  if (recentre < 0)
+    recentre <- recentre + 360
+  if (recentre == 180)
+    recentre <- 0
+
+
+
+
+  # recentring
+  if (recentre > 0) {
+    duplon <- function(dta) {
+      dta2 <- dta
+      dta2$long <- dta2$long + 360
+      dta2$order <- dta2$order + 10000
+      dta2$group <- as.factor(paste(as.character(dta2$group), 'b'))
+      return(rbind(dta, dta2))
+    }
+    gw <- duplon(gw)
+    dispa <- duplon(dispa)
+    dispb <- duplon(dispb)
+    gpoly <- duplon(gpoly)
+  }
+
+  pol <-
+    ggplot2::geom_polygon(
+      data = gw,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      fill = NA
+    )
+  d1 <-
+    ggplot2::geom_polygon(
+      data = dispa,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      linetype = 'dashed',
+      fill = NA
+    )
+  d2 <-
+    ggplot2::geom_polygon(
+      data = dispb,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      linetype = 'dashed',
+      fill = NA
+    )
+
+  lakes <-
+    ggplot2::geom_polygon(
+      data = gpoly[gpoly$id == "Lakes",],
+      aes(group = .data$group),
+      fill = water.col,
+      colour = line.col,
+      size = line.width
+    )
+
+  lin <-
+    ggplot2::geom_path(data = gw,
+                       aes(group = .data$group),
+                       colour = line.col,
+                       size = line.width)
+
+  thm1 <- ggplot2::scale_y_continuous('', breaks = NULL)
+  thm2 <- ggplot2::scale_x_continuous('', breaks = NULL)
+  thm3 <- ggplot2::theme_bw()
+
+  # merge data
+  centres <- merge(X, centroid, by.x = 'iso3', by.y = 'id')
+
+  # plot
+  zx <- c(-180, 180)
+  if (recentre > 0)
+    zx <- zx + recentre
+  zy <- c(min(gw$lat), max(gw$lat))
+
+  p <-
+    ggplot2::ggplot(gw, aes(x = .data$long, y = .data$lat)) +
+    ggplot2::geom_polygon(aes(group = .data$group), fill = 'white') +
+    lakes + d1 + d2 + lin +
+    thm1 + thm2 + thm3 +
+    ggplot2::coord_cartesian(xlim = zx,
+                             ylim = zy,
+                             expand = FALSE) +
+    ggplot2::labs(title = map.title) +
+    ggplot2::theme(
+      aspect.ratio = 2.2 / 4,
+      plot.title = element_text(size = 16, hjust = 0),
+      plot.background = element_rect(fill = water.col),
+      legend.key.size = unit(0.5, "cm"),
+      legend.text = element_text(size = 7),
+      legend.position = legend.pos,
+      legend.justification = c(0.5, 1),
+      legend.title = element_text(size = 7, hjust = 0.4),
+      rect = element_blank()
+    ) +
+    ggplot2::geom_point(
+      aes(
+        x = .data$long,
+        y = .data$lat,
+        size = .data$size
+      ),
+      data = centres,
+      shape = 21,
+      color = bubble.col,
+      fill = bubble.col,
+      alpha = bubble.alpha
+    ) +
+    ggplot2::scale_size_area(
+      name = legend.title,
+      limits = scale.limits,
+      breaks = scale.breaks,
+      labels = scale.labels,
+      max_size = 25
+    )
+
+  return(p)
+}
