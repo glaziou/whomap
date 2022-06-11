@@ -27,7 +27,7 @@ Examples:
 brics <- data.frame(iso3=c('BRA','CHN','IND','RUS','ZAF'),
                     var=1)
 
-whomap(brics, colour='red', legend.pos='none')
+whomap(brics, colour='red', legend.pos='none', water.col = 'white')
 
 ![image](https://user-images.githubusercontent.com/233963/119449613-2663f980-bd33-11eb-99ea-fa4f567cba3d.png)
 
@@ -41,19 +41,24 @@ whomap(brics, colour='red', legend.pos='none', water.col = 'lightblue')
 
 brics$var <- 1:5
 
-whomap(brics, legend.title='BRICS')
+whomap(brics, legend.title='BRICS', water.col = 'white')
 
 ![image](https://user-images.githubusercontent.com/233963/120228265-13798980-c24b-11eb-9ce6-7f62ae383fa7.png)
 
 
 Recentered on the region Asia-Pacific, with the legend repositioned:
 
-whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163)
+whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163, water.col = 'white')
 
 ![image](https://user-images.githubusercontent.com/233963/119449970-98d4d980-bd33-11eb-89f3-24ca5c8be36f.png)
 
 
-The above maps can be drawn using high-definition 2022 WHO shapefiles by passing a parameter "hidef = T" (default is F). The drawing in high-definition is considerably slower.
+The above maps can be drawn using high-definition 2022 WHO shapefiles by passing a parameter "hidef = T" (default is F). The drawing in high-definition is considerably slower. The previous map in high-definition with the default colour for water bodies is shown below:
+
+whomap(brics, legend.title = 'BRICS', legend.pos = c(0.7, 0.26), recentre = 163, hidef = TRUE)
+
+![image](https://user-images.githubusercontent.com/233963/173190001-bcd107c7-17cc-483b-8419-968ccd06ec4c.png)
+
 
 
 ### Bivariate
