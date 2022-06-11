@@ -587,9 +587,9 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
       return(rbind(dta, dta2))
     }
     gw <- duplon(gw)
-    gpoly <- duplon(gpoly)
     dispa <- duplon(dispa)
     dispb <- duplon(dispb)
+    glakes <- duplon(glakes)
   }
 
   pol <-
@@ -621,7 +621,7 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
 
   lakes <-
     ggplot2::geom_polygon(
-      data = gpoly[gpoly$id == "Lakes",],
+      data = glakes,
       aes(group = .data$group),
       fill = water.col,
       colour = line.col,
@@ -1160,7 +1160,7 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
     gw <- duplon(gw)
     dispa <- duplon(dispa)
     dispb <- duplon(dispb)
-    gpoly <- duplon(gpoly)
+    glakes <- duplon(glakes)
   }
 
   pol <-
@@ -1192,7 +1192,7 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
 
   lakes <-
     ggplot2::geom_polygon(
-      data = gpoly[gpoly$id == "Lakes",],
+      data = glakes,
       aes(group = .data$group),
       fill = water.col,
       colour = line.col,
