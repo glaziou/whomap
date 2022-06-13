@@ -6,7 +6,7 @@ Draws choropleth maps of the world, based on WHO shapefiles (simpler or more det
 
 ## Install:
 
-devtools::install_github('glaziou/whomap')
+remotes::install_github('glaziou/whomap')
 
 
 ## Usage
