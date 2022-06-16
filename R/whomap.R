@@ -218,7 +218,7 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
   gworld <- rbind(gworld, asm, pyf, mnp, wlf)
 
 
-  # Askai Chin hack
+  # Aksai Chin hack
   eastAC <- gline[gline$group == 2.12, ]
   westAC <- gline[gline$group == 2.12 & gline$order == c(27), ]
   westAC$order <- 37
@@ -469,21 +469,6 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
 
 
 
-# data prep
-# library(data.table)
-# library(ggplot2)
-# library(rgdal)
-# library(broom)
-# ogrInfo('../WHOshapefiles','GLOBAL_ADM0')
-# gw <- tidy(readOGR('../WHOshapefiles','GLOBAL_ADM0', stringsAsFactors = F), region='ISO_3_CODE')
-# dispa <- tidy(readOGR('../WHOshapefiles','Detailed_Boundary_Disputed_Areas', stringsAsFactors = F), region='ISO_3_CODE')
-# dispb <- tidy(readOGR('../WHOshapefiles','Detailed_Boundary_Disputed_Borders', stringsAsFactors = F), region='ISO_3_CODE')
-#
-#
-
-
-
-
 
 
 #' Choropleth world maps
@@ -576,6 +561,16 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
 
   X <- rbind(X, x1, x2, x3, x4)
 
+  # Aksai Chin hack
+  eastAC <- gline[gline$group == 2.12, ]
+  westAC <- gline[gline$group == 2.12 & gline$order == c(27), ]
+  westAC$order <- 37
+  AC <- rbind (eastAC, westAC)
+  AC$hole <- FALSE
+  AC$piece <- 1
+  AC$group <- 'Askai Chin.1'
+  AC$id <- 'Askai Chin'
+
 
   # recentring
   if (recentre > 0) {
@@ -589,7 +584,8 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
     gw <- duplon(gw)
     dispa <- duplon(dispa)
     dispb <- duplon(dispb)
-    glakes <- duplon(glakes)
+    gpoly <- duplon(gpoly)
+    ac <- duplon(AC)
   }
 
   pol <-
@@ -611,21 +607,61 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
     )
   d2 <-
     ggplot2::geom_polygon(
-      data = dispb,
+      data = dispb[dispb$group != 18.1, ],
       aes(group = .data$group),
       colour = line.col,
       size = line.width,
       linetype = 'dashed',
       fill = NA
     )
+  ld1 <-
+    ggplot2::geom_path(
+      data = dispa,
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      linetype = 'dotted',
+    )
+  ld2 <-
+    ggplot2::geom_path(
+      data = dispb[dispb$group != 18.1, ],
+      aes(group = .data$group),
+      colour = line.col,
+      size = line.width,
+      linetype = 'dotted',
+    )
 
   lakes <-
     ggplot2::geom_polygon(
-      data = glakes,
+      data = gpoly[gpoly$id=='Lakes', ],
       aes(group = .data$group),
       fill = water.col,
       colour = line.col,
       size = line.width
+    )
+
+  jk <-
+    ggplot2::geom_polygon(
+      data = gpoly[gpoly$id == "Jammu and Kashmir",],
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA
+    )
+
+  ak <-
+    ggplot2::geom_polygon(
+      data = AC,
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA
+    )
+
+  ab <-
+    ggplot2::geom_polygon(
+      data = gpoly[gpoly$id == "Abyei",],
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA,
     )
 
   lin <-
@@ -670,9 +706,7 @@ whomap <- function (X = data.frame(iso3 = NA, var = NA),
   p <-
     ggplot2::ggplot(toplot, aes(x = .data$long, y = .data$lat)) +
     ggplot2::geom_polygon(aes(group = .data$group, fill = .data$var), colour = NA, size = line.width) +
-    lakes +
-    d1 + d2 +
-    lin +
+    lin + lakes + ab + ak + jk + ld1 + ld2 +
     thm1 + thm2 + thm3 +
     ggplot2::geom_polygon(aes(group = .data$group, fill = .data$var), toplot[toplot$id %in% c('SWZ', 'LSO'), ]) +
     ggplot2::scale_fill_manual(legend.title, values = col2) +
@@ -1146,6 +1180,15 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
     recentre <- 0
 
 
+  # Aksai Chin hack
+  eastAC <- gline[gline$group == 2.12, ]
+  westAC <- gline[gline$group == 2.12 & gline$order == c(27), ]
+  westAC$order <- 37
+  AC <- rbind (eastAC, westAC)
+  AC$hole <- FALSE
+  AC$piece <- 1
+  AC$group <- 'Askai Chin.1'
+  AC$id <- 'Askai Chin'
 
 
   # recentring
@@ -1160,7 +1203,8 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
     gw <- duplon(gw)
     dispa <- duplon(dispa)
     dispb <- duplon(dispb)
-    glakes <- duplon(glakes)
+    gpoly <- duplon(gpoly)
+    ac <- duplon(AC)
   }
 
   pol <-
@@ -1171,32 +1215,52 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
       size = line.width,
       fill = NA
     )
-  d1 <-
-    ggplot2::geom_polygon(
+  ld1 <-
+    ggplot2::geom_path(
       data = dispa,
       aes(group = .data$group),
       colour = line.col,
       size = line.width,
-      linetype = 'dashed',
-      fill = NA
+      linetype = 'dotted'
     )
-  d2 <-
-    ggplot2::geom_polygon(
-      data = dispb,
+  ld2 <-
+    ggplot2::geom_path(
+      data = dispb[dispb$group != 18.1, ],
       aes(group = .data$group),
       colour = line.col,
       size = line.width,
-      linetype = 'dashed',
-      fill = NA
+      linetype = 'dotted'
     )
 
   lakes <-
     ggplot2::geom_polygon(
-      data = glakes,
+      data = gpoly[gpoly$id=='Lakes', ],
       aes(group = .data$group),
       fill = water.col,
       colour = line.col,
       size = line.width
+    )
+
+  jk <-
+    ggplot2::geom_polygon(
+      data = gpoly[gpoly$id == "Jammu and Kashmir",],
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA
+    )
+  ak <-
+    ggplot2::geom_polygon(
+      data = ac,
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA
+    )
+  ab <-
+    ggplot2::geom_polygon(
+      data = gpoly[gpoly$id == "Abyei",],
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA,
     )
 
   lin <-
@@ -1221,7 +1285,7 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
   p <-
     ggplot2::ggplot(gw, aes(x = .data$long, y = .data$lat)) +
     ggplot2::geom_polygon(aes(group = .data$group), fill = 'white') +
-    lakes + d1 + d2 + lin +
+    lin + lakes + jk + ak + ab + ld1 + ld2 +
     thm1 + thm2 + thm3 +
     ggplot2::coord_cartesian(xlim = zx,
                              ylim = zy,
