@@ -1241,6 +1241,13 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
       size = line.width
     )
 
+  esh <-
+    ggplot2::geom_polygon(
+      data = gw[gw$id == "ESH",],
+      aes(group = .data$group),
+      fill = I("grey75"),
+      colour = NA
+    )
   jk <-
     ggplot2::geom_polygon(
       data = gpoly[gpoly$id == "Jammu and Kashmir",],
@@ -1285,7 +1292,7 @@ bubblemap <- function (X = data.frame(iso3 = NA, size = NA),
   p <-
     ggplot2::ggplot(gw, aes(x = .data$long, y = .data$lat)) +
     ggplot2::geom_polygon(aes(group = .data$group), fill = 'white') +
-    lin + lakes + jk + ak + ab + ld1 + ld2 +
+    lin + lakes + esh + jk + ak + ab + ld1 + ld2 +
     thm1 + thm2 + thm3 +
     ggplot2::coord_cartesian(xlim = zx,
                              ylim = zy,
